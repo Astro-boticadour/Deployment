@@ -1,0 +1,60 @@
+version: '3.9'
+services:
+
+  mysql:
+    container_name: astro-mysql
+    image: mysql:latest
+    volumes:
+      - "./mysql/data:/var/lib/mysql"
+    env_file:
+      - ./mysql/.env
+    restart: always
+
+  api:
+    container_name: astro-api
+    build:
+      context: ./API
+      network: host
+    image : astro/api
+    depends_on:
+      - mysql
+    env_file:
+      - ./API/.env
+    restart: always
+
+  front:
+    container_name: astro-front
+    build:
+      context: ./front-end
+      network: host
+    image : astro/front
+    depends_on:
+      - api
+    restart: always
+
+
+  reverseproxy:
+    container_name: astro-reverseproxy
+    image: nginx:latest
+    depends_on:
+      - api
+      - front
+    volumes:
+      - "./reverseproxy/:/etc/nginx/conf.d/"
+      #- "/etc/docker/nginxproxymanager/letsencrypt/live/npm-1/fullchain.pem:/fullchain.pem"
+      #- "/etc/docker/nginxproxymanager/letsencrypt/live/npm-1/privkey.pem:/privkey.pem"
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+
+      
+  phpmyadmin:
+    container_name: astro-phpmyadmin
+    image: phpmyadmin:latest
+    depends_on:
+      - mysql
+    restart: always
+    environment:
+      - PMA_ABSOLUTE_URI=/phpmyadmin/
+      - PMA_HOST=dev-astro-mysql
