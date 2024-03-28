@@ -39,3 +39,15 @@ Suivez les instructions ci-dessous pour déployer l'application sur l'environnem
 2. **Déploiement :**
 Exécutez le script de déploiement correspondant à l'environnement cible :
 - sudo bash deploy.sh
+
+## Instructions de Desinstallation
+
+**Attention !!**
+Les actions suivante écraseront toutes les donnée sauvegardé
+
+Pour dèsinstaller l'application, placer vous dans le dossier de ce repo (ici `/app/astro`) et executer les instructions qui suivent :
+- docker-compose down
+- cd ..
+- rm -rf astro
+
+
